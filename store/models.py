@@ -1,23 +1,9 @@
-"""
-Module: models.py
-
-Contains Django models for handling categories, items, and deliveries.
-
-This module defines the following classes:
-- Category: Represents a category for items.
-- Item: Represents an item in the inventory.
-- Delivery: Represents a delivery of an item to a customer.
-
-Each class provides specific fields and methods for handling related data.
-"""
-
 from django.db import models
 from django.urls import reverse
 from django.forms import model_to_dict
 from django_extensions.db.fields import AutoSlugField
 from phonenumber_field.modelfields import PhoneNumberField
 from accounts.models import Vendor
-
 
 class Category(models.Model):
     """
@@ -35,11 +21,16 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'Categories'
 
-
 class Item(models.Model):
     """
     Represents an item in the inventory.
     """
+    TYPE_DE_CASIER_CHOICES = [
+        ('casier_de_24', 'Casier de 24'),
+        ('casier_de_12', 'Casier de 12'),
+        ('casier_de_6', 'Casier de 6'),
+    ]
+
     slug = AutoSlugField(unique=True, populate_from='name')
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=256)
@@ -48,6 +39,21 @@ class Item(models.Model):
     price = models.FloatField(default=0)
     expiring_date = models.DateTimeField(null=True, blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
+    type_de_casier = models.CharField(
+        max_length=20,
+        choices=TYPE_DE_CASIER_CHOICES,
+        default='casier_de_24'
+    )
+    total_bouteilles = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if self.type_de_casier == 'casier_de_24':
+            self.total_bouteilles = 24
+        elif self.type_de_casier == 'casier_de_12':
+            self.total_bouteilles = 12
+        elif self.type_de_casier == 'casier_de_6':
+            self.total_bouteilles = 6
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """
@@ -55,7 +61,7 @@ class Item(models.Model):
         """
         return (
             f"{self.name} - Category: {self.category}, "
-            f"Quantity: {self.quantity}"
+            f"Quantity: {self.quantity}, Type de Casier: {self.get_type_de_casier_display()}"
         )
 
     def get_absolute_url(self):
@@ -76,7 +82,6 @@ class Item(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'Items'
-
 
 class Delivery(models.Model):
     """

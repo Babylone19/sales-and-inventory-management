@@ -73,6 +73,24 @@
                                 <div class="text-danger">{{ form.vendor.errors }}</div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.type_de_casier.id_for_label }}" class="form-label">
+                                    Type de Casier
+                                </label>
+                                {{ form.type_de_casier }}
+                                <div class="text-danger">{{ form.type_de_casier.errors }}</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.total_bouteilles.id_for_label }}" class="form-label">
+                                    Total Bouteilles
+                                </label>
+                                {{ form.total_bouteilles }}
+                                <div class="text-danger">{{ form.total_bouteilles.errors }}</div>
+                            </div>
+                        </div>
+                        <!-- Exemple d'ajout de cases à cocher pour des options supplémentaires -->
+                        
                         <div class="form-group text-center">
                             <button class="btn btn-success btn-lg" type="submit">
                                 <i class="fas fa-check"></i> Submit

@@ -1,7 +1,6 @@
 import django_tables2 as tables
 from .models import Item, Delivery
 
-
 class ItemTable(tables.Table):
     """
     Table representation for Item model.
@@ -11,10 +10,11 @@ class ItemTable(tables.Table):
         template_name = "django_tables2/semantic.html"
         fields = (
             'id', 'name', 'category', 'quantity',
-            'selling_price', 'expiring_date', 'vendor'
+            'price', 'expiring_date', 'vendor',
+            'type_de_casier',  # Ajout du champ type_de_casier
+            'total_bouteilles',  # Ajout du champ total_bouteilles
         )
         order_by_field = 'sort'
-
 
 class DeliveryTable(tables.Table):
     """

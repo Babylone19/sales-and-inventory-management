@@ -1,6 +1,6 @@
 from django import forms
-from .models import Purchase
-
+from django.forms import inlineformset_factory
+from .models import Purchase, PurchaseDetail
 
 class BootstrapMixin(forms.ModelForm):
     """
@@ -11,6 +11,19 @@ class BootstrapMixin(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs.setdefault('class', 'form-control')
 
+class PurchaseDetailForm(BootstrapMixin, forms.ModelForm):
+    """
+    A form for creating and updating PurchaseDetail instances.
+    """
+    class Meta:
+        model = PurchaseDetail
+        fields = [
+            'item', 'price', 'quantity', 'type_de_casier', 'total_bouteilles'
+        ]
+
+PurchaseDetailFormSet = inlineformset_factory(
+    Purchase, PurchaseDetail, form=PurchaseDetailForm, extra=1, can_delete=True
+)
 
 class PurchaseForm(BootstrapMixin, forms.ModelForm):
     """
@@ -19,8 +32,7 @@ class PurchaseForm(BootstrapMixin, forms.ModelForm):
     class Meta:
         model = Purchase
         fields = [
-            'item',  'price', 'description', 'vendor',
-            'quantity', 'delivery_date', 'delivery_status'
+            'description', 'vendor', 'order_date', 'delivery_date', 'delivery_status'
         ]
         widgets = {
             'delivery_date': forms.DateInput(
@@ -32,13 +44,7 @@ class PurchaseForm(BootstrapMixin, forms.ModelForm):
             'description': forms.Textarea(
                 attrs={'rows': 1, 'cols': 40}
             ),
-            'quantity': forms.NumberInput(
-                attrs={'class': 'form-control'}
-            ),
             'delivery_status': forms.Select(
-                attrs={'class': 'form-control'}
-            ),
-            'price': forms.NumberInput(
                 attrs={'class': 'form-control'}
             ),
         }

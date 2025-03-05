@@ -1,17 +1,5 @@
-"""
-Module: admin.py
-
-Django admin configurations for managing categories, items, and deliveries.
-
-This module defines the following admin classes:
-- CategoryAdmin: Configuration for the Category model in the admin interface.
-- ItemAdmin: Configuration for the Item model in the admin interface.
-- DeliveryAdmin: Configuration for the Delivery model in the admin interface.
-"""
-
 from django.contrib import admin
 from .models import Category, Item, Delivery
-
 
 class CategoryAdmin(admin.ModelAdmin):
     """
@@ -21,18 +9,18 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     ordering = ('name',)
 
-
 class ItemAdmin(admin.ModelAdmin):
     """
     Admin configuration for the Item model.
     """
     list_display = (
-        'name', 'category', 'quantity', 'price', 'expiring_date', 'vendor'
+        'name', 'category', 'quantity', 'price',
+        'expiring_date', 'vendor', 'type_de_casier',  # Ajout du champ type_de_casier
+        'total_bouteilles',  # Ajout du champ total_bouteilles
     )
     search_fields = ('name', 'category__name', 'vendor__name')
-    list_filter = ('category', 'vendor')
+    list_filter = ('category', 'vendor', 'type_de_casier')  # Ajout du filtre pour type_de_casier
     ordering = ('name',)
-
 
 class DeliveryAdmin(admin.ModelAdmin):
     """
@@ -45,7 +33,6 @@ class DeliveryAdmin(admin.ModelAdmin):
     search_fields = ('item__name', 'customer_name')
     list_filter = ('is_delivered', 'date')
     ordering = ('-date',)
-
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Item, ItemAdmin)

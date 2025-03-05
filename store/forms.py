@@ -1,7 +1,6 @@
 from django import forms
 from .models import Item, Category, Delivery
 
-
 class ItemForm(forms.ModelForm):
     """
     A form for creating or updating an Item in the inventory.
@@ -15,7 +14,9 @@ class ItemForm(forms.ModelForm):
             'quantity',
             'price',
             'expiring_date',
-            'vendor'
+            'vendor',
+            'type_de_casier',  # Ajout du champ type_de_casier
+            'total_bouteilles',  # Ajout du champ total_bouteilles
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -40,8 +41,9 @@ class ItemForm(forms.ModelForm):
                 }
             ),
             'vendor': forms.Select(attrs={'class': 'form-control'}),
+            'type_de_casier': forms.Select(attrs={'class': 'form-control'}),  # Widget pour type_de_casier
+            'total_bouteilles': forms.NumberInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),  # Widget pour total_bouteilles
         }
-
 
 class CategoryForm(forms.ModelForm):
     """
@@ -60,7 +62,6 @@ class CategoryForm(forms.ModelForm):
         labels = {
             'name': 'Category Name',
         }
-
 
 class DeliveryForm(forms.ModelForm):
     class Meta:

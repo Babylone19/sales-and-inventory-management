@@ -74,7 +74,6 @@ class SaleDetail(models.Model):
     """
     Represents details of a specific sale, including item and quantity.
     """
-
     sale = models.ForeignKey(
         Sale,
         on_delete=models.CASCADE,
@@ -92,6 +91,12 @@ class SaleDetail(models.Model):
     )
     quantity = models.PositiveIntegerField()
     total_detail = models.DecimalField(max_digits=10, decimal_places=2)
+    type_de_casier = models.CharField(
+        max_length=20,
+        choices=Item.TYPE_DE_CASIER_CHOICES,
+        default='casier_de_24'
+    )
+    total_bouteilles = models.IntegerField(default=0)
 
     class Meta:
         db_table = "sale_details"
@@ -105,7 +110,8 @@ class SaleDetail(models.Model):
         return (
             f"Detail ID: {self.id} | "
             f"Sale ID: {self.sale.id} | "
-            f"Quantity: {self.quantity}"
+            f"Quantity: {self.quantity} | "
+            f"Type de Casier: {self.get_type_de_casier_display()}"
         )
 
 
@@ -158,3 +164,46 @@ class Purchase(models.Model):
 
     class Meta:
         ordering = ["order_date"]
+class PurchaseDetail(models.Model):
+    """
+    Represents details of a specific purchase, including item and quantity.
+    """
+    purchase = models.ForeignKey(
+        Purchase,
+        on_delete=models.CASCADE,
+        db_column="purchase",
+        related_name="purchasedetail_set"
+    )
+    item = models.ForeignKey(
+        Item,
+        on_delete=models.DO_NOTHING,
+        db_column="item"
+    )
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    quantity = models.PositiveIntegerField()
+    total_detail = models.DecimalField(max_digits=10, decimal_places=2)
+    type_de_casier = models.CharField(
+        max_length=20,
+        choices=Item.TYPE_DE_CASIER_CHOICES,
+        default='casier_de_24'
+    )
+    total_bouteilles = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = "purchase_details"
+        verbose_name = "Purchase Detail"
+        verbose_name_plural = "Purchase Details"
+
+    def __str__(self):
+        """
+        Returns a string representation of the PurchaseDetail instance.
+        """
+        return (
+            f"Detail ID: {self.id} | "
+            f"Purchase ID: {self.purchase.id} | "
+            f"Quantity: {self.quantity} | "
+            f"Type de Casier: {self.get_type_de_casier_display()}"
+        )
